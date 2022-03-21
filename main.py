@@ -36,7 +36,15 @@ def game_won(board):
         return True
 
 
-def y_test(board, p):
+def legal_move(board):
+    move = []
+    for x in board:
+        if type(x) == int:
+            move.append(x)
+    return move
+
+
+def test(board, p):
     print(board, 40)
     print(p, 41)
     board[p - 1] = "X"
@@ -61,25 +69,27 @@ def single_player():
     print_tic_tac_toe(board_values)
     for n in range(9):
         if (n + i) % 2 != 0:
-            pos = input(f'\n\n{player1}, where do you want to place "X"?\n type 1-9 to replace a number on the board: ')
-            board_values[int(pos) - 1] = "X"
-            print_tic_tac_toe(board_values)
+            pos = input(f'\n\n{player1}, where do you want to place "X"?\n '
+                        f'type 1-9 to replace a number on the board: ')
+            if int(pos) in legal_move(board_values):
+                board_values[int(pos) - 1] = "X"
+                print_tic_tac_toe(board_values)
+            else:
+                print('Illegal move, game Over! Computer won.')
+                break
             if game_won(board_values):
                 print(f'Game Over! {player1.title()} won.')
                 break
         else:
-            numeric_board = []
-            pos = 0
-            for x in board_values:
-                if type(x) == int:
-                    numeric_board.append(x)
-            for y in numeric_board:
+            pos = -1
+            legal_pos = legal_move(board_values)
+            for x in legal_pos:
                 board_test = board_values[:]
-                if y_test(board_test, y):
-                    pos = y
+                if test(board_test, x):
+                    pos = x
                     break
-            if pos == 0:
-                pos = random.choice(numeric_board)
+            if pos == -1:
+                pos = random.choice(legal_pos)
             board_values[int(pos) - 1] = "O"
             print_tic_tac_toe(board_values)
             if game_won(board_values):
@@ -96,17 +106,26 @@ def two_player():
     print_tic_tac_toe(board_values)
     for n in range(9):
         if n % 2 == 0:
-            pos = input(f'\n\n{player1}, where do you want to place "X"?\n type 1-9 to replace a number on the board: ')
-            board_values[int(pos) - 1] = "X"
-            print_tic_tac_toe(board_values)
+            pos = input(f'\n\n{player1.title()}, where do you want to place "X"?\n'
+                        f' type 1-9 to replace a number on the board: ')
+            if int(pos) in legal_move(board_values):
+                board_values[int(pos) - 1] = "X"
+                print_tic_tac_toe(board_values)
+            else:
+                print(f'Illegal move, game over.  {player2.title()} won.')
+                break
             if game_won(board_values):
                 print(f'Game Over! {player1.title()} won.')
                 break
         else:
-            pos = input(
-                f'\n\n{player2}, where do you want to place "O"? \n type 1-9 to replace a number on the board: ')
-            board_values[int(pos) - 1] = "O"
-            print_tic_tac_toe(board_values)
+            pos = input(f'\n\n{player2.title()}, where do you want to place "O"? \n'
+                        f' type 1-9 to replace a number on the board: ')
+            if int(pos) in legal_move(board_values):
+                board_values[int(pos) - 1] = "O"
+                print_tic_tac_toe(board_values)
+            else:
+                print(f'Illegal move, game over.  {player1.title()} won.')
+                break
             if game_won(board_values):
                 print(f'Game Over! {player2.title()} won.')
                 break
